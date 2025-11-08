@@ -10,7 +10,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   building: Building2,
 };
 
-export function Services() {
+export default function Services() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const { setSelectedServiceId } = useStore();

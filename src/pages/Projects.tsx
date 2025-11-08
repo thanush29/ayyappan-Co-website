@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase, Project } from '../lib/supabase';
 import { useStore } from '../store/useStore';
 
-export function Projects() {
+export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');

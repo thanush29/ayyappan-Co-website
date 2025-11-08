@@ -15,7 +15,7 @@ interface MonthlySubmission {
   count: number;
 }
 
-export function Dashboard() {
+export default function Dashboard() {
   const [stats, setStats] = useState<Stats>({
     services: 0,
     projects: 0,

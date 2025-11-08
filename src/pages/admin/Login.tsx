@@ -1,24 +1,33 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Lock, Mail, Zap } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Lock, Mail, Zap } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export function AdminLogin() {
+export default function AdminLogin() {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
-    const { error: signInError } = await signIn(email, password);
+    try {
+      const { error: signInError } = await signIn(email, password);
+      if (signInError) throw new Error(signInError.message);
 
-    if (signInError) {
-      setError(signInError.message);
+      // Redirect to admin portal after successful login
+      const redirectPath = location.state?.from?.pathname || "/admin/portal";
+      navigate(redirectPath, { replace: true });
+    } catch (err: any) {
+      setError(err.message || "Login failed. Please check your credentials.");
       setLoading(false);
     }
   };
@@ -44,9 +53,14 @@ export function AdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <Mail
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="email"
                   value={email}
@@ -59,9 +73,14 @@ export function AdminLogin() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <Lock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="password"
                   value={password}
@@ -90,7 +109,7 @@ export function AdminLogin() {
               whileTap={{ scale: 0.98 }}
               className="w-full py-3 bg-gradient-to-r from-[#0047FF] to-[#7A00FF] text-white font-semibold rounded-lg hover:shadow-lg transition-shadow disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </motion.button>
           </form>
         </div>

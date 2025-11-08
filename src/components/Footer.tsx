@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin, Linkedin, Facebook, Twitter, Instagram, Zap, Downl
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 
-export function Footer() {
+export default function Footer() {
   const { setCurrentPage } = useStore();
 
   const handleNavClick = (page: string) => {

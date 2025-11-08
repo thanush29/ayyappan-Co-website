@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-export function Home() {
+export default function Home() {
   const { setCurrentPage } = useStore();
   const [stats, setStats] = useState({
     years_experience: 14,

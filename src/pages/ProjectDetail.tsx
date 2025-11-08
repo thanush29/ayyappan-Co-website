@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase, Project } from '../lib/supabase';
 import { useStore } from '../store/useStore';
 
-export function ProjectDetail() {
+export default function ProjectDetail() {
   const { selectedProjectId, setSelectedProjectId } = useStore();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);

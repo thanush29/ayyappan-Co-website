@@ -3,7 +3,7 @@ import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-export function Contact() {
+export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',

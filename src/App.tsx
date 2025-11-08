@@ -1,75 +1,47 @@
-import { AnimatePresence } from 'framer-motion';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { Home } from './pages/Home';
-import { About } from './pages/About';
-import { Services } from './pages/Services';
-import { ServiceDetail } from './pages/ServiceDetail';
-import { Projects } from './pages/Projects';
-import { ProjectDetail } from './pages/ProjectDetail';
-import { Contact } from './pages/Contact';
-import { ClientsCarousel } from './components/ClientsCarousel';
-import { AdminLogin } from './pages/admin/Login';
-import { AdminPortal } from './pages/admin/AdminPortal';
-import { AuthProvider } from './contexts/AuthContext';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { useStore } from './store/useStore';
-import { useEffect } from 'react';
+// src/App.tsx
+import { Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+
+// Pages
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
+import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
+import Contact from "./pages/Contact";
+import AdminLogin from "./pages/admin/Login";
+import Dashboard from "./pages/admin/Dashboard";
 
 function App() {
-  const { currentPage, selectedServiceId, selectedProjectId } = useStore();
-
-  useEffect(() => {
-    document.title = `${currentPage.charAt(0).toUpperCase() + currentPage.slice(1)} | Ayyappan & Co`;
-  }, [currentPage]);
-
-  const renderPage = () => {
-    if (selectedServiceId) {
-      return <ServiceDetail />;
-    }
-    if (selectedProjectId) {
-      return <ProjectDetail />;
-    }
-
-    switch (currentPage) {
-      case 'home':
-        return (
-          <>
-            <Home />
-            <ClientsCarousel />
-          </>
-        );
-      case 'about':
-        return <About />;
-      case 'services':
-        return <Services />;
-      case 'projects':
-        return <Projects />;
-      case 'contact':
-        return <Contact />;
-      case 'admin':
-        return (
-          <ProtectedRoute fallback={<AdminLogin />}>
-            <AdminPortal />
-          </ProtectedRoute>
-        );
-      default:
-        return <Home />;
-    }
-  };
-
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-white">
-        {currentPage !== 'admin' && <Header />}
-        <AnimatePresence mode="wait">
-          <main key={currentPage + (selectedServiceId || '') + (selectedProjectId || '')}>
-            {renderPage()}
-          </main>
-        </AnimatePresence>
-        {currentPage !== 'admin' && <Footer />}
-      </div>
-    </AuthProvider>
+    <>
+      {/* Common layout for public pages */}
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/services/:id" element={<ServiceDetail />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:id" element={<ProjectDetail />} />
+        <Route path="/contact" element={<Contact />} />
+
+        {/* Admin login and dashboard */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+      <Footer />
+    </>
   );
 }
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase, Service } from '../lib/supabase';
 import { useStore } from '../store/useStore';
 
-export function ServiceDetail() {
+export default function ServiceDetail() {
   const { selectedServiceId, setSelectedServiceId } = useStore();
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);

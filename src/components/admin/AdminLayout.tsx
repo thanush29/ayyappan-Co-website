@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Briefcase,
@@ -10,38 +11,36 @@ import {
   Menu,
   X,
   Zap,
-} from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+} from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface AdminLayoutProps {
-  children: React.ReactNode;
-  currentView: string;
-  onViewChange: (view: string) => void;
-}
-
-export function AdminLayout({ children, currentView, onViewChange }: AdminLayoutProps) {
+export function AdminLayout() {
   const { signOut, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'services', label: 'Services', icon: Briefcase },
-    { id: 'projects', label: 'Projects', icon: FolderKanban },
-    { id: 'clients', label: 'Clients', icon: Users },
-    { id: 'submissions', label: 'Form Submissions', icon: FileText },
+    { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/admin/services", label: "Services", icon: Briefcase },
+    { path: "/admin/projects", label: "Projects", icon: FolderKanban },
+    { path: "/admin/clients", label: "Clients", icon: Users },
+    { path: "/admin/submissions", label: "Form Submissions", icon: FileText },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
+            {/* Sidebar toggle (mobile) */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
             >
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
+
+            {/* Logo */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0047FF] via-[#7A00FF] to-[#00C853] flex items-center justify-center">
                 <Zap className="w-6 h-6 text-white" />
@@ -53,6 +52,7 @@ export function AdminLayout({ children, currentView, onViewChange }: AdminLayout
             </div>
           </div>
 
+          {/* User info & logout */}
           <div className="flex items-center gap-4">
             <div className="hidden md:block text-right">
               <p className="text-sm font-medium text-gray-900">{user?.email}</p>
@@ -71,33 +71,36 @@ export function AdminLayout({ children, currentView, onViewChange }: AdminLayout
         </div>
       </header>
 
+      {/* Sidebar + Main */}
       <div className="flex">
+        {/* Sidebar */}
         <aside
           className={`fixed lg:sticky top-[73px] left-0 h-[calc(100vh-73px)] bg-white border-r border-gray-200 transition-transform duration-300 z-30 ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           } w-64`}
         >
           <nav className="p-4 space-y-2">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  onViewChange(item.id);
-                  setSidebarOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  currentView === item.id
-                    ? 'bg-gradient-to-r from-[#0047FF]/10 to-[#7A00FF]/10 text-[#0047FF] font-semibold'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+            {navItems.map(({ path, label, icon: Icon }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    isActive
+                      ? "bg-gradient-to-r from-[#0047FF]/10 to-[#7A00FF]/10 text-[#0047FF] font-semibold"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`
+                }
               >
-                <item.icon size={20} />
-                {item.label}
-              </button>
+                <Icon size={20} />
+                {label}
+              </NavLink>
             ))}
           </nav>
         </aside>
 
+        {/* Sidebar overlay (mobile) */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-20 lg:hidden"
@@ -105,7 +108,10 @@ export function AdminLayout({ children, currentView, onViewChange }: AdminLayout
           />
         )}
 
-        <main className="flex-1 p-6 lg:p-8">{children}</main>
+        {/* Main content */}
+        <main className="flex-1 p-6 lg:p-8">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
