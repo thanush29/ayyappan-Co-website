@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -14,7 +14,13 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
-export function AdminLayout() {
+interface AdminLayoutProps {
+  children?: ReactNode;
+  currentView?: string;
+  onViewChange?: (view: string) => void | Promise<void>;
+}
+
+export function AdminLayout({ children, currentView, onViewChange }: AdminLayoutProps) {
   const { signOut, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -31,24 +37,22 @@ export function AdminLayout() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {/* Sidebar toggle (mobile) */}
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-            >
-              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+          {/* Sidebar toggle (mobile) */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
 
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0047FF] via-[#7A00FF] to-[#00C853] flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
-                <p className="text-xs text-gray-600">Ayyappan & Co</p>
-              </div>
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0047FF] via-[#7A00FF] to-[#00C853] flex items-center justify-center">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
+              <p className="text-xs text-gray-600">Ayyappan & Co</p>
             </div>
           </div>
 
@@ -80,23 +84,29 @@ export function AdminLayout() {
           } w-64`}
         >
           <nav className="p-4 space-y-2">
-            {navItems.map(({ path, label, icon: Icon }) => (
-              <NavLink
-                key={path}
-                to={path}
-                onClick={() => setSidebarOpen(false)}
-                className={({ isActive }) =>
-                  `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive
-                      ? "bg-gradient-to-r from-[#0047FF]/10 to-[#7A00FF]/10 text-[#0047FF] font-semibold"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`
-                }
-              >
-                <Icon size={20} />
-                {label}
-              </NavLink>
-            ))}
+            {navItems.map(({ path, label, icon: Icon }) => {
+              const viewName = path.split("/").pop()!;
+              return (
+                <NavLink
+                  key={path}
+                  to={path}
+                  onClick={() => {
+                    setSidebarOpen(false);
+                    if (onViewChange) onViewChange(viewName);
+                  }}
+                  className={({ isActive }) =>
+                    `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      currentView === viewName || isActive
+                        ? "bg-gradient-to-r from-[#0047FF]/10 to-[#7A00FF]/10 text-[#0047FF] font-semibold"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`
+                  }
+                >
+                  <Icon size={20} />
+                  {label}
+                </NavLink>
+              );
+            })}
           </nav>
         </aside>
 
@@ -110,7 +120,7 @@ export function AdminLayout() {
 
         {/* Main content */}
         <main className="flex-1 p-6 lg:p-8">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     </div>
