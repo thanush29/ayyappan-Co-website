@@ -9,6 +9,10 @@ import { Projects } from './pages/Projects';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { Contact } from './pages/Contact';
 import { ClientsCarousel } from './components/ClientsCarousel';
+import { AdminLogin } from './pages/admin/Login';
+import { AdminPortal } from './pages/admin/AdminPortal';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { useStore } from './store/useStore';
 import { useEffect } from 'react';
 
@@ -43,21 +47,29 @@ function App() {
         return <Projects />;
       case 'contact':
         return <Contact />;
+      case 'admin':
+        return (
+          <ProtectedRoute fallback={<AdminLogin />}>
+            <AdminPortal />
+          </ProtectedRoute>
+        );
       default:
         return <Home />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <AnimatePresence mode="wait">
-        <main key={currentPage + (selectedServiceId || '') + (selectedProjectId || '')}>
-          {renderPage()}
-        </main>
-      </AnimatePresence>
-      <Footer />
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-white">
+        {currentPage !== 'admin' && <Header />}
+        <AnimatePresence mode="wait">
+          <main key={currentPage + (selectedServiceId || '') + (selectedProjectId || '')}>
+            {renderPage()}
+          </main>
+        </AnimatePresence>
+        {currentPage !== 'admin' && <Footer />}
+      </div>
+    </AuthProvider>
   );
 }
 

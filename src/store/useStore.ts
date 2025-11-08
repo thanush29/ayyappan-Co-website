@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type Page = 'home' | 'about' | 'services' | 'projects' | 'contact';
+type Page = 'home' | 'about' | 'services' | 'projects' | 'contact' | 'admin';
 
 interface StoreState {
   currentPage: Page;
