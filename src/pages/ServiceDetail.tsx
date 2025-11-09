@@ -3,6 +3,7 @@ import { ArrowLeft, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase, Service, getImageUrl } from '../lib/supabase';
+import { sendNotificationEmail } from '../lib/emailjs';
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -54,6 +55,21 @@ export default function ServiceDetail() {
       service_id: id,
       ...formData,
     });
+
+    if (!error) {
+      await sendNotificationEmail({
+        to_name: 'Admin',
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        message: formData.message,
+        form_type: 'Service Inquiry',
+        service_name: service?.title,
+        budget: formData.budget,
+        submitted_at: new Date().toLocaleString(),
+      });
+    }
 
     setSubmitting(false);
 

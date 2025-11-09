@@ -1,0 +1,119 @@
+====================================
+EMAILJS TEMPLATE CONFIGURATION
+====================================
+
+Copy and paste this template into your EmailJS template editor.
+
+SUBJECT LINE:
+-------------
+New Form Submission - {{form_type}}
+
+
+TEMPLATE BODY:
+--------------
+New inquiry received from Ayyappan & Co website!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTACT INFORMATION
+-------------------
+Name:        {{from_name}}
+Email:       {{from_email}}
+Phone:       {{phone}}
+Company:     {{company}}
+
+INQUIRY DETAILS
+---------------
+Form Type:   {{form_type}}
+Service:     {{service_name}}
+Budget:      {{budget}}
+
+MESSAGE
+-------
+{{message}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Submitted: {{submitted_at}}
+
+---
+This is an automated notification from your website.
+Please respond to the customer's email address above.
+
+
+TEMPLATE SETTINGS:
+------------------
+1. Go to EmailJS Dashboard → Email Templates
+2. Click "Create New Template"
+3. Copy the subject line and body above
+4. Set "To Email" to your admin email address
+5. Set "From Name" to: Ayyappan & Co Website
+6. Set "Reply To" to: {{from_email}}
+7. Save and copy the Template ID
+
+
+TEMPLATE VARIABLES USED:
+------------------------
+- {{to_name}}         Admin's name (default: "Admin")
+- {{form_type}}       Type of form (Contact Form / Service Inquiry)
+- {{from_name}}       Customer's name
+- {{from_email}}      Customer's email
+- {{phone}}           Customer's phone (optional)
+- {{company}}         Customer's company (optional)
+- {{service_name}}    Service interested in (for inquiries)
+- {{budget}}          Budget range (for inquiries)
+- {{message}}         Customer's message/details
+- {{submitted_at}}    Timestamp of submission
+
+
+ENVIRONMENT VARIABLES NEEDED:
+-----------------------------
+Add to your .env file:
+
+VITE_EMAILJS_SERVICE_ID=service_xxxxxxx
+VITE_EMAILJS_TEMPLATE_ID=template_xxxxxxx
+VITE_EMAILJS_PUBLIC_KEY=xxxxxxxxxxxx
+
+
+TESTING THE TEMPLATE:
+---------------------
+1. Submit a test form on your website
+2. Check your admin email inbox
+3. Verify all variables are populated correctly
+4. Check spam folder if not received
+5. Respond to test email to verify reply-to works
+
+
+TROUBLESHOOTING:
+----------------
+- Email not received → Check EmailJS dashboard for errors
+- Variables showing as {{variable}} → Check template variable names match exactly
+- Emails in spam → Add EmailJS to safe senders list
+- Monthly limit reached → Upgrade EmailJS plan or wait for next month
+
+
+FREE TIER LIMITS:
+-----------------
+EmailJS Free Tier: 200 emails per month
+Perfect for small businesses receiving 5-10 inquiries per day.
+
+
+OPTIONAL CUSTOMIZATIONS:
+------------------------
+1. Add company logo in email header
+2. Add social media links in footer
+3. Add automated response to customer
+4. Add email categories/tags for filtering
+5. Create separate templates for contact vs inquiry forms
+
+
+NOTES:
+------
+- The app works without EmailJS (forms still save to database)
+- Email delivery is usually instant (< 1 minute)
+- All form submissions are also saved in Supabase database
+- Reply-to is set to customer's email for easy response
+- Variables that are empty (like phone) will show as blank, not as {{variable}}
+
+
+====================================

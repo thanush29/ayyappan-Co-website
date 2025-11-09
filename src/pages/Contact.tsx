@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { sendNotificationEmail } from '../lib/emailjs';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -22,6 +23,19 @@ export default function Contact() {
       form_type: 'contact',
       ...formData,
     });
+
+    if (!error) {
+      await sendNotificationEmail({
+        to_name: 'Admin',
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        message: formData.message,
+        form_type: 'Contact Form',
+        submitted_at: new Date().toLocaleString(),
+      });
+    }
 
     setSubmitting(false);
 
