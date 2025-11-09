@@ -40,7 +40,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 cursor-pointer">
             <motion.img
-              src="/logo.jpg"
+              src="/logo.png"
               alt="Ayyappan & Co"
               className="h-16 w-auto object-contain"
               whileHover={{ scale: 1.05 }}

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Power, Network, Building2 } from 'lucide-react';
 import { VideoCarousel } from '../components/VideoCarousel';
 import { ClientsCarousel } from '../components/ClientsCarousel';
+import { FeaturedBrochureSection } from "../components/FeaturedBrochureSection";
 import { useStore } from '../store/useStore';
 import { supabase, Service, Project } from '../lib/supabase';
 import { Link } from 'react-router-dom';
@@ -271,6 +272,7 @@ export default function Home() {
       </section>
 
       <ClientsCarousel />
+      <FeaturedBrochureSection />
     </div>
   );
 }
