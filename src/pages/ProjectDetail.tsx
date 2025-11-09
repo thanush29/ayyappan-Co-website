@@ -1,20 +1,30 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Calendar, User, Tag } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase, Project } from '../lib/supabase';
-import { useStore } from '../store/useStore';
+import { useParams, Link } from 'react-router-dom';
+import { supabase, Project, getImageUrl } from '../lib/supabase';
 
 export default function ProjectDetail() {
-  const { selectedProjectId, setSelectedProjectId } = useStore();
+  const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
   useEffect(() => {
     const fetchProject = async () => {
-      if (!selectedProjectId) return;
+      if (!id) return;
 
-      const { data } = await supabase.from('projects').select('*').eq('id', selectedProjectId).maybeSingle();
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching project:', error);
+        setLoading(false);
+        return;
+      }
 
       if (data) {
         setProject(data);
@@ -24,12 +34,12 @@ export default function ProjectDetail() {
     };
 
     fetchProject();
-  }, [selectedProjectId]);
+  }, [id]);
 
-  if (!selectedProjectId) {
+  if (!id) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
-        <div className="text-xl text-gray-600">No project selected</div>
+        <div className="text-xl text-gray-600">No project ID provided</div>
       </div>
     );
   }
@@ -50,22 +60,21 @@ export default function ProjectDetail() {
     );
   }
 
-  const galleryImages = project.gallery_urls || [];
+  const galleryImages = Array.isArray(project.gallery_urls) ? project.gallery_urls : [];
   const allImages = project.thumbnail_url ? [project.thumbnail_url, ...galleryImages] : galleryImages;
+  const allImagesWithUrls = allImages.map(img => getImageUrl(img)).filter(url => url);
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
       <section className="py-12 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
         <div className="container mx-auto px-4">
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={() => setSelectedProjectId(null)}
+          <Link
+            to="/projects"
             className="flex items-center gap-2 text-gray-300 hover:text-white mb-6"
           >
             <ArrowLeft size={20} />
             Back to Projects
-          </motion.button>
+          </Link>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="flex flex-wrap items-center gap-4 mb-4">
@@ -112,32 +121,54 @@ export default function ProjectDetail() {
             >
               <div className="mb-8">
                 <div className="relative h-[500px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden shadow-lg">
-                  {selectedImage ? (
-                    <img src={selectedImage} alt={project.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <div className="text-center">
-                        <div className="text-8xl font-bold mb-4">{project.title.charAt(0)}</div>
-                        <div className="text-xl">No Image Available</div>
-                      </div>
+                  {selectedImage && getImageUrl(selectedImage) ? (
+                    <img
+                      src={getImageUrl(selectedImage)}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="w-full h-full flex items-center justify-center text-gray-400" style={{ display: (selectedImage && getImageUrl(selectedImage)) ? 'none' : 'flex' }}>
+                    <div className="text-center">
+                      <div className="text-8xl font-bold mb-4">{project.title.charAt(0)}</div>
+                      <div className="text-xl">No Image Available</div>
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {allImages.length > 1 && (
+                {allImagesWithUrls.length > 1 && (
                   <div className="mt-6 grid grid-cols-4 md:grid-cols-6 gap-4">
-                    {allImages.map((img, index) => (
-                      <motion.div
-                        key={index}
-                        whileHover={{ scale: 1.05 }}
-                        onClick={() => setSelectedImage(img)}
-                        className={`relative h-20 bg-gray-200 rounded-lg overflow-hidden cursor-pointer ${
-                          selectedImage === img ? 'ring-4 ring-[#0047FF]' : ''
-                        }`}
-                      >
-                        <img src={img} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
-                      </motion.div>
-                    ))}
+                    {allImages.map((img, index) => {
+                      const imgUrl = getImageUrl(img);
+                      if (!imgUrl) return null;
+                      return (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.05 }}
+                          onClick={() => setSelectedImage(img)}
+                          className={`relative h-20 bg-gray-200 rounded-lg overflow-hidden cursor-pointer ${
+                            selectedImage === img ? 'ring-4 ring-[#0047FF]' : ''
+                          }`}
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`Gallery ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              const parent = target.parentElement as HTMLElement;
+                              if (parent) parent.style.display = 'none';
+                            }}
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -183,17 +214,15 @@ export default function ProjectDetail() {
                 <p className="text-white/90 mb-4">
                   Interested in learning more about similar projects or discussing your requirements?
                 </p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    useStore.getState().setCurrentPage('contact');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="w-full px-6 py-3 bg-white text-[#0047FF] font-semibold rounded-lg hover:shadow-lg transition-shadow"
-                >
-                  Contact Us
-                </motion.button>
+                <Link to="/contact">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full px-6 py-3 bg-white text-[#0047FF] font-semibold rounded-lg hover:shadow-lg transition-shadow"
+                  >
+                    Contact Us
+                  </motion.button>
+                </Link>
               </div>
             </motion.div>
           </div>

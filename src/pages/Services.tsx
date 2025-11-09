@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Power, Network, Building2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase, Service } from '../lib/supabase';
-import { useStore } from '../store/useStore';
+import { Link } from 'react-router-dom';
+import { supabase, Service, getImageUrl } from '../lib/supabase';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   power: Power as React.ComponentType<{ size?: number; className?: string }>,
@@ -13,7 +13,6 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 export default function Services() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const { setSelectedServiceId } = useStore();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -29,9 +28,6 @@ export default function Services() {
     fetchServices();
   }, []);
 
-  const handleReadMore = (serviceId: string) => {
-    setSelectedServiceId(serviceId);
-  };
 
   if (loading) {
     return (
@@ -80,15 +76,13 @@ export default function Services() {
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">{service.title}</h3>
                 <p className="text-gray-600 leading-relaxed mb-6 flex-grow">{service.description}</p>
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleReadMore(service.id)}
+                <Link
+                  to={`/services/${service.id}`}
                   className="flex items-center gap-2 text-[#0047FF] font-semibold hover:gap-3 transition-all"
                 >
                   Read More
                   <ArrowRight size={20} />
-                </motion.button>
+                </Link>
               </motion.div>
             );
           })}

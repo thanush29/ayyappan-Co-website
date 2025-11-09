@@ -1,20 +1,27 @@
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase, Project } from '../lib/supabase';
-import { useStore } from '../store/useStore';
+import { Link } from 'react-router-dom';
+import { supabase, Project, getImageUrl } from '../lib/supabase';
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
-  const { setSelectedProjectId } = useStore();
 
   useEffect(() => {
     const fetchProjects = async () => {
-      let query = supabase.from('projects').select('*').order('is_featured', { ascending: false }).order('display_order');
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('is_featured', { ascending: false })
+        .order('display_order');
 
-      const { data } = await query;
+      if (error) {
+        console.error('Error fetching projects:', error);
+        setLoading(false);
+        return;
+      }
 
       if (data) {
         setProjects(data);
@@ -88,38 +95,42 @@ export default function Projects() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProjects.map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ y: -10 }}
-                  onClick={() => setSelectedProjectId(project.id)}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer border border-gray-100 group"
-                >
-                  {project.is_featured && (
-                    <div className="absolute top-4 right-4 z-10 px-3 py-1 bg-gradient-to-r from-[#0047FF] to-[#7A00FF] text-white text-sm font-semibold rounded-full">
-                      Featured
-                    </div>
-                  )}
+                <Link key={project.id} to={`/projects/${project.id}`}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    whileHover={{ y: -10 }}
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer border border-gray-100 group"
+                  >
+                    {project.is_featured && (
+                      <div className="absolute top-4 right-4 z-10 px-3 py-1 bg-gradient-to-r from-[#0047FF] to-[#7A00FF] text-white text-sm font-semibold rounded-full">
+                        Featured
+                      </div>
+                    )}
 
-                  <div className="relative h-56 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
-                    {project.thumbnail_url ? (
-                      <img
-                        src={project.thumbnail_url}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="relative h-56 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+                      {project.thumbnail_url && (
+                        <img
+                          src={getImageUrl(project.thumbnail_url)}
+                          alt={project.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      )}
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 absolute inset-0" style={{ display: project.thumbnail_url ? 'none' : 'flex' }}>
                         <div className="text-center">
                           <div className="text-6xl font-bold mb-2">{project.title.charAt(0)}</div>
                           <div className="text-sm">No Image</div>
                         </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
 
                   <div className="p-6">
                     <div className="inline-block px-3 py-1 bg-gradient-to-r from-[#0047FF]/10 to-[#7A00FF]/10 text-[#0047FF] text-sm font-semibold rounded-full mb-3">
@@ -150,6 +161,7 @@ export default function Projects() {
                     </div>
                   </div>
                 </motion.div>
+              </Link>
               ))}
             </div>
           )}

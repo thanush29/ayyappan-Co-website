@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase, Service } from '../lib/supabase';
-import { useStore } from '../store/useStore';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { supabase, Service, getImageUrl } from '../lib/supabase';
 
 export default function ServiceDetail() {
-  const { selectedServiceId, setSelectedServiceId } = useStore();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -21,13 +22,19 @@ export default function ServiceDetail() {
 
   useEffect(() => {
     const fetchService = async () => {
-      if (!selectedServiceId) return;
+      if (!id) return;
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('services')
         .select('*')
-        .eq('id', selectedServiceId)
+        .eq('id', id)
         .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching service:', error);
+        setLoading(false);
+        return;
+      }
 
       if (data) {
         setService(data);
@@ -36,7 +43,7 @@ export default function ServiceDetail() {
     };
 
     fetchService();
-  }, [selectedServiceId]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +51,7 @@ export default function ServiceDetail() {
 
     const { error } = await supabase.from('form_submissions').insert({
       form_type: 'service_inquiry',
-      service_id: selectedServiceId,
+      service_id: id,
       ...formData,
     });
 
@@ -64,10 +71,10 @@ export default function ServiceDetail() {
     }
   };
 
-  if (!selectedServiceId) {
+  if (!id) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
-        <div className="text-xl text-gray-600">No service selected</div>
+        <div className="text-xl text-gray-600">No service ID provided</div>
       </div>
     );
   }
@@ -92,15 +99,13 @@ export default function ServiceDetail() {
     <div className="min-h-screen pt-20 bg-gray-50">
       <section className="py-12 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
         <div className="container mx-auto px-4">
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={() => setSelectedServiceId(null)}
+          <Link
+            to="/services"
             className="flex items-center gap-2 text-gray-300 hover:text-white mb-6"
           >
             <ArrowLeft size={20} />
             Back to Services
-          </motion.button>
+          </Link>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -121,6 +126,20 @@ export default function ServiceDetail() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
+              {service.image_url && (
+                <div className="mb-8 rounded-2xl overflow-hidden shadow-lg">
+                  <img
+                    src={getImageUrl(service.image_url)}
+                    alt={service.title}
+                    className="w-full h-96 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+
               <h2 className="text-3xl font-bold mb-6 text-gray-900">Service Details</h2>
               <div className="prose prose-lg text-gray-700">
                 <p className="leading-relaxed whitespace-pre-line">{service.detailed_description}</p>

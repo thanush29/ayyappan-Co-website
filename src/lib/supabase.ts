@@ -68,3 +68,18 @@ export type SiteSetting = {
   description?: string;
   updated_at: string;
 };
+
+export function getPublicUrl(path: string | null | undefined): string {
+  if (!path) return '';
+
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+
+  const { data } = supabase.storage.from('media').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+export function getImageUrl(path: string | null | undefined): string {
+  return getPublicUrl(path);
+}
