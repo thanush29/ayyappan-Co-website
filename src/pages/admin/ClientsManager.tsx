@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, X, Save } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Save, Upload, Image as ImageIcon } from 'lucide-react';
 import { supabase, Client } from '../../lib/supabase';
+import { uploadFile, generateFileName } from '../../lib/storage';
 
 export function ClientsManager() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,6 +27,20 @@ export function ClientsManager() {
       setClients(data);
     }
     setLoading(false);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    const filePath = generateFileName('clients', file);
+    const result = await uploadFile('media', filePath, file);
+    setUploading(false);
+
+    if (result.error) {
+      alert('Failed to upload logo: ' + result.error.message);
+      return;
+    }
+
+    setFormData({ ...formData, logo_url: result.publicUrl });
   };
 
   const handleCreate = async () => {
@@ -91,17 +107,6 @@ export function ClientsManager() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL *</label>
-          <input
-            type="url"
-            value={formData.logo_url}
-            onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0047FF] focus:border-transparent outline-none"
-            placeholder="https://example.com/logo.png"
-          />
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
           <input
             type="number"
@@ -109,6 +114,46 @@ export function ClientsManager() {
             onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0047FF] focus:border-transparent outline-none"
           />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Client Logo</label>
+          <div className="flex items-start gap-4">
+            {formData.logo_url && (
+              <div className="w-32 h-32 rounded-lg overflow-hidden border border-gray-300 bg-white p-2">
+                <img
+                  src={formData.logo_url}
+                  alt="Logo preview"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
+            <div className="flex-1">
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#0047FF] hover:bg-blue-50 transition-colors">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  {uploading ? (
+                    <div className="text-[#0047FF] font-medium">Uploading...</div>
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 mb-2 text-gray-400" />
+                      <p className="text-sm text-gray-600">Click to upload logo</p>
+                      <p className="text-xs text-gray-500">PNG, JPG, SVG up to 5MB</p>
+                    </>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file);
+                  }}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -129,7 +174,8 @@ export function ClientsManager() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={onSubmit}
-          className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#0047FF] to-[#7A00FF] text-white rounded-lg font-semibold"
+          disabled={uploading}
+          className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#0047FF] to-[#7A00FF] text-white rounded-lg font-semibold disabled:opacity-50"
         >
           <Save size={18} />
           {submitLabel}
@@ -203,7 +249,7 @@ export function ClientsManager() {
               <>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <div className="w-32 h-20 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-24 bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden p-2 border border-gray-200">
                       {client.logo_url ? (
                         <img
                           src={client.logo_url}
@@ -212,7 +258,8 @@ export function ClientsManager() {
                         />
                       ) : (
                         <div className="text-gray-400 text-center">
-                          <div className="text-2xl font-bold">{client.name.charAt(0)}</div>
+                          <ImageIcon size={32} className="mx-auto mb-1" />
+                          <div className="text-xs">No logo</div>
                         </div>
                       )}
                     </div>
