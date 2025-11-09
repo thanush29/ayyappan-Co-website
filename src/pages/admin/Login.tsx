@@ -21,10 +21,9 @@ export default function AdminLogin() {
 
     try {
       const { error: signInError } = await signIn(email, password);
-      if (signInError) throw new Error(signInError.message);
+      if (signInError) throw signInError;
 
-      // Redirect to admin portal after successful login
-      const redirectPath = location.state?.from?.pathname || "/admin/portal";
+      const redirectPath = location.state?.from?.pathname || "/admin/dashboard";
       navigate(redirectPath, { replace: true });
     } catch (err: any) {
       setError(err.message || "Login failed. Please check your credentials.");

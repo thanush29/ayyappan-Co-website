@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -11,57 +11,60 @@ import ServiceDetail from "./pages/ServiceDetail";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
 
 // Admin Pages
 import AdminLogin from "./pages/admin/Login";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
-import {ServicesManager} from "./pages/admin/ServicesManager";
-import {ProjectsManager} from "./pages/admin/ProjectsManager";
-import {ClientsManager} from "./pages/admin/ClientsManager";
-import {SubmissionsViewer} from "./pages/admin/SubmissionsViewer"; // <-- add this line
-
+import { ServicesManager } from "./pages/admin/ServicesManager";
+import { ProjectsManager } from "./pages/admin/ProjectsManager";
+import { ClientsManager } from "./pages/admin/ClientsManager";
+import { SubmissionsViewer } from "./pages/admin/SubmissionsViewer";
 
 function App() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
-      {/* Public Header */}
-      <Header />
+      {!isAdminRoute && <Header />}
 
       <Routes>
-  {/* Public Routes */}
-  <Route path="/" element={<Home />} />
-  <Route path="/about" element={<About />} />
-  <Route path="/services" element={<Services />} />
-  <Route path="/services/:id" element={<ServiceDetail />} />
-  <Route path="/projects" element={<Projects />} />
-  <Route path="/projects/:id" element={<ProjectDetail />} />
-  <Route path="/contact" element={<Contact />} />
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/services/:id" element={<ServiceDetail />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:id" element={<ProjectDetail />} />
+        <Route path="/contact" element={<Contact />} />
 
-  {/* Admin Login */}
-  <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Admin Login */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
-  {/* Admin Protected Routes */}
-  <Route
-    path="/admin"
-    element={
-      <ProtectedRoute>
-        <AdminLayout />
-      </ProtectedRoute>
-    }
-  >
-    <Route index element={<Dashboard />} /> {/* /admin -> dashboard */}
-    <Route path="dashboard" element={<Dashboard />} />
-    <Route path="services" element={<ServicesManager />} />
-    <Route path="projects" element={<ProjectsManager />} />
-    <Route path="clients" element={<ClientsManager />} />
-    <Route path="submissions" element={<SubmissionsViewer />} />
-  </Route>
-</Routes>
+        {/* Admin Protected Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="services" element={<ServicesManager />} />
+          <Route path="projects" element={<ProjectsManager />} />
+          <Route path="clients" element={<ClientsManager />} />
+          <Route path="submissions" element={<SubmissionsViewer />} />
+        </Route>
 
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
 
-      {/* Public Footer */}
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </>
   );
 }
