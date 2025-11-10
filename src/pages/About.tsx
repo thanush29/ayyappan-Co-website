@@ -1,5 +1,41 @@
 import { motion } from "framer-motion";
+import { FeaturedBrochureSection } from "../components/FeaturedBrochureSection";
 import { Target, Eye, Heart, CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
+
+// Counter Component
+const Counter = ({ end, suffix = "" }: { end: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  useEffect(() => {
+    if (inView) {
+      let start = 0;
+      const duration = 2000; // 2 seconds
+      const increment = end / (duration / 16); // 60fps
+
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= end) {
+          setCount(end);
+          clearInterval(timer);
+        } else {
+          setCount(Math.floor(start));
+        }
+      }, 16);
+
+      return () => clearInterval(timer);
+    }
+  }, [inView, end]);
+
+  return (
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
+};
 
 export default function About() {
   const fadeInUp = {
@@ -63,7 +99,7 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  Founded in 2010, Ayyappan & Co has grown from a small
+                  Founded in 2009, Ayyappan & Co has grown from a small
                   electrical contracting firm to one of India's leading power
                   infrastructure companies. Our journey has been marked by a
                   relentless pursuit of excellence and a commitment to powering
@@ -91,11 +127,33 @@ export default function About() {
               transition={{ duration: 0.6 }}
               className="relative h-96 rounded-2xl overflow-hidden shadow-2xl"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#0047FF]/20 via-[#7A00FF]/20 to-[#00C853]/20 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-6xl font-bold mb-2">14+</div>
-                  <div className="text-2xl">Years of Excellence</div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0047FF] via-[#7A00FF] to-[#00C853]">
+                <div className="absolute inset-0 bg-black/40"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
+                      className="text-8xl font-bold mb-4 drop-shadow-2xl"
+                    >
+                      <Counter end={14} suffix="+" />
+                    </motion.div>
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: 0.5 }}
+                      className="text-3xl font-semibold tracking-wide"
+                    >
+                      Years of Excellence
+                    </motion.div>
+                  </div>
                 </div>
+                {/* Animated circles background */}
+                <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
               </div>
             </motion.div>
           </div>
@@ -198,9 +256,9 @@ export default function About() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { number: "100%", label: "Safety Compliance" },
-                { number: "98%", label: "Client Satisfaction" },
-                { number: "100+", label: "Projects Delivered" },
+                { number: 100, label: "Projects Done", suffix: "+" },
+                { number: 500, label: "Expert Technicians", suffix: "+" },
+                { number: 100, label: "Client Satisfaction", suffix: "%" },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -211,7 +269,7 @@ export default function About() {
                   className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20"
                 >
                   <div className="text-4xl font-bold text-[#00C853] mb-2">
-                    {stat.number}
+                    <Counter end={stat.number} suffix={stat.suffix} />
                   </div>
                   <div className="text-gray-300">{stat.label}</div>
                 </motion.div>
@@ -220,6 +278,7 @@ export default function About() {
           </motion.div>
         </div>
       </section>
+      <FeaturedBrochureSection />
     </div>
   );
 }
