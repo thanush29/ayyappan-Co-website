@@ -1,7 +1,9 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ChatbotButton from "./components/chatbot/ChatbotButton";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -22,12 +24,26 @@ import { ProjectsManager } from "./pages/admin/ProjectsManager";
 import { ClientsManager } from "./pages/admin/ClientsManager";
 import { SubmissionsViewer } from "./pages/admin/SubmissionsViewer";
 
+// ScrollToTop Component (added here)
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+
+  return null;
+};
+
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
+      {/* Scroll to top on every route change */}
+      <ScrollToTop />
+
       {!isAdminRoute && <Header />}
 
       <Routes>
@@ -63,6 +79,7 @@ function App() {
         {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <ChatbotButton />
 
       {!isAdminRoute && <Footer />}
     </>
