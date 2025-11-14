@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { FeaturedBrochureSection } from "../components/FeaturedBrochureSection";
-import { Target, Eye, Heart, CheckCircle } from "lucide-react";
+import { Target, Eye, Heart, CheckCircle, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
@@ -38,6 +38,8 @@ const Counter = ({ end, suffix = "" }: { end: number; suffix?: string }) => {
 };
 
 export default function About() {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   const fadeInUp = {
     initial: { opacity: 0, y: 40 },
     whileInView: { opacity: 1, y: 0 },
@@ -85,6 +87,89 @@ export default function About() {
               Building India's power infrastructure with innovation, integrity,
               and excellence for over 14 years
             </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Power Flow Journey Video Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+              The Power Journey
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              From generation to your doorstep - Experience the complete journey of electrical power
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-5xl mx-auto"
+          >
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+              <video
+                className="w-full h-auto"
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                onPlay={() => setIsVideoPlaying(true)}
+                onPause={() => setIsVideoPlaying(false)}
+              >
+                <source src="/Power_Infrastructure_Animation_Prompt.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              
+              {/* Video Overlay - shown when video is paused */}
+              {!isVideoPlaying && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute inset-0 bg-gradient-to-br from-[#0047FF]/80 via-[#7A00FF]/80 to-[#00C853]/80 flex items-center justify-center cursor-pointer"
+                  onClick={(e) => {
+                    const video = e.currentTarget.previousElementSibling as HTMLVideoElement;
+                    video?.play();
+                  }}
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl"
+                  >
+                    <Play size={32} className="text-[#0047FF] ml-1" fill="currentColor" />
+                  </motion.div>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Power Flow Stages */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+              {[
+                { stage: "Generation", icon: "⚡", color: "from-yellow-400 to-orange-500" },
+                { stage: "Transmission", icon: "🔌", color: "from-blue-400 to-blue-600" },
+                { stage: "Distribution", icon: "📡", color: "from-purple-400 to-purple-600" },
+                { stage: "House", icon: "🏠", color: "from-green-400 to-green-600" },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white p-4 rounded-xl shadow-md text-center border border-gray-200"
+                >
+                  <div className={`text-3xl mb-2 bg-gradient-to-br ${item.color} w-12 h-12 rounded-lg flex items-center justify-center mx-auto`}>
+                    {item.icon}
+                  </div>
+                  <div className="text-sm font-semibold text-gray-700">{item.stage}</div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import ChatMessage from "./ChatMessage";
@@ -13,6 +13,13 @@ const ChatbotWindow: React.FC<ChatbotWindowProps> = ({ onClose }) => {
   const { messages, sendMessage, isTyping } = useChatbot();
   const [input, setInput] = useState("");
 
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // AUTO SCROLL TO BOTTOM
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
   const handleSend = () => {
     if (!input.trim()) return;
     sendMessage(input);
@@ -21,41 +28,78 @@ const ChatbotWindow: React.FC<ChatbotWindowProps> = ({ onClose }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 100 }}
+      initial={{ opacity: 0, y: 80 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 100 }}
-      transition={{ type: "spring", stiffness: 80, damping: 12 }}
-      className="fixed bottom-20 right-6 w-80 md:w-96 bg-white/70 backdrop-blur-xl shadow-2xl rounded-xl border border-gray-200 flex flex-col z-50"
+      exit={{ opacity: 0, y: 80 }}
+      transition={{ type: "spring", duration: 0.7 }}
+      className="
+        fixed bottom-20 right-6 w-80 md:w-96 rounded-2xl shadow-2xl z-50
+        bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-xl border border-white/20
+      "
     >
-      {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gradient-to-r from-gray-100 to-white rounded-t-xl">
-        <h3 className="font-semibold text-gray-800">Ayyappanco Chat Assistant</h3>
-        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+      {/* HEADER */}
+      <div
+        className="
+          flex justify-between items-center p-4 rounded-t-2xl
+          bg-gradient-to-r from-[#1E4EED] via-[#14C77B] to-[#7B4DED]
+          shadow-md
+        "
+      >
+        <h3 className="font-semibold text-white drop-shadow-sm">
+          Ayyappan & Co Assistant
+        </h3>
+        <button
+          onClick={onClose}
+          className="text-white hover:scale-110 transition"
+        >
           <X size={20} />
         </button>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg, idx) => (
-          <ChatMessage key={idx} message={msg} />
+      {/* MESSAGES */}
+      <div
+        className="
+          flex-1 overflow-y-auto p-4 space-y-3 max-h-80
+          scrollbar-thin scrollbar-thumb-[#7B4DED]/60 scrollbar-track-transparent
+        "
+      >
+        {messages.map((msg, i) => (
+          <ChatMessage key={i} message={msg} />
         ))}
+
         {isTyping && <TypingIndicator />}
+
+        {/* AUTO SCROLL TARGET */}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="flex items-center p-3 border-t border-gray-200">
+      {/* INPUT BAR */}
+      <div
+        className="
+          flex items-center p-3 border-t border-white/20
+          bg-gradient-to-r from-white/60 to-white/40 backdrop-blur-xl
+        "
+      >
         <input
-          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Type your message..."
-          className="flex-1 bg-white/60 backdrop-blur-md border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="Ask something..."
+          className="
+            flex-1 px-4 py-2 text-sm rounded-full
+            bg-white/80 shadow-inner
+            focus:outline-none focus:ring-2 focus:ring-[#7B4DED]/40
+          "
         />
+
         <button
           onClick={handleSend}
-          className="ml-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition"
+          className="
+            ml-3 p-2 rounded-full
+            bg-gradient-to-r from-[#1E4EED] to-[#7B4DED]
+            text-white shadow-md
+            hover:brightness-110 active:scale-95 transition
+          "
         >
           <Send size={16} />
         </button>

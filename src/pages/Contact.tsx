@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Clock, Send, Building2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, Building2, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { sendNotificationEmail } from '../lib/emailjs';
@@ -41,6 +41,26 @@ export default function Contact() {
 
     if (!error) {
       setSubmitted(true);
+      
+      // Auto-send WhatsApp message
+      const whatsappNumber = '919962056262'; // +91 99620 56262
+      const whatsappMessage = `Hello! I'm ${formData.name} from ${formData.company || 'N/A'}.
+
+📧 Email: ${formData.email}
+📱 Phone: ${formData.phone || 'N/A'}
+
+Message:
+${formData.message}
+
+---
+Sent via Ayyappan & Co Contact Form`;
+
+      const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+      
+      // Open WhatsApp in a new tab
+      window.open(whatsappURL, '_blank');
+
+      // Reset form
       setFormData({
         name: '',
         email: '',
@@ -216,7 +236,11 @@ export default function Contact() {
               <h2 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">
                 Send Us a Message
               </h2>
-              <p className="text-gray-600 mb-8">We'll respond within 24 hours</p>
+              <p className="text-gray-600 mb-2">We'll respond within 24 hours</p>
+              <div className="flex items-center gap-2 mb-8 text-sm text-green-600 bg-green-50 p-3 rounded-lg border border-green-200">
+                <MessageCircle size={16} />
+                <span className="font-medium">Form submission will auto-open WhatsApp</span>
+              </div>
 
               {submitted ? (
                 <motion.div
@@ -236,10 +260,14 @@ export default function Contact() {
                     </svg>
                   </motion.div>
                   <div className="text-green-600 text-xl font-semibold mb-2">Message Sent Successfully!</div>
-                  <p className="text-green-700">Thank you for contacting us. We'll get back to you within 24 hours.</p>
+                  <p className="text-green-700 mb-3">Thank you for contacting us. We'll get back to you within 24 hours.</p>
+                  <div className="flex items-center justify-center gap-2 text-sm text-green-600">
+                    <MessageCircle size={16} />
+                    <span>WhatsApp opened in new tab</span>
+                  </div>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -309,8 +337,9 @@ export default function Contact() {
                   </div>
 
                   <motion.button
-                    type="submit"
-                    disabled={submitting}
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={submitting || !formData.name || !formData.email || !formData.message}
                     whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(0,71,255,0.3)" }}
                     whileTap={{ scale: 0.98 }}
                     className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white font-semibold rounded-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -326,12 +355,12 @@ export default function Contact() {
                       </>
                     ) : (
                       <>
-                        Send Message
-                        <Send size={18} />
+                        Send Message & Open WhatsApp
+                        <MessageCircle size={18} />
                       </>
                     )}
                   </motion.button>
-                </form>
+                </div>
               )}
             </motion.div>
 
@@ -374,18 +403,34 @@ export default function Contact() {
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
               Our team is ready to discuss your power infrastructure needs and provide customized solutions
             </p>
-            <motion.a
-              href="tel:+919442152528"
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 20px 50px rgba(0,71,255,0.4)"
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300"
-            >
-              <Phone size={24} />
-              Call Us Now
-            </motion.a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.a
+                href="tel:+919442152528"
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 20px 50px rgba(0,71,255,0.4)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300"
+              >
+                <Phone size={24} />
+                Call Us Now
+              </motion.a>
+              <motion.a
+                href="https://wa.me/919962056262"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 20px 50px rgba(37,211,102,0.4)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-green-500 to-green-600 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300"
+              >
+                <MessageCircle size={24} />
+                WhatsApp Us
+              </motion.a>
+            </div>
           </motion.div>
         </div>
       </section>

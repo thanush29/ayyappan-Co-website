@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase, Service, getImageUrl } from '../lib/supabase';
 import { sendNotificationEmail } from '../lib/emailjs';
+import { FeaturedBrochureSection } from "../components/FeaturedBrochureSection";
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -46,6 +47,40 @@ export default function ServiceDetail() {
     fetchService();
   }, [id]);
 
+  const sendWhatsAppMessage = (data: typeof formData) => {
+    const phoneNumber = '919962056262'; // WhatsApp number without + or spaces
+    
+    // Format the message
+    const whatsappMessage = `*New Service Inquiry*
+
+*Service:* ${service?.title || 'N/A'}
+
+*Customer Details:*
+Name: ${data.name}
+Email: ${data.email}
+Phone: ${data.phone || 'N/A'}
+Company: ${data.company || 'N/A'}
+Budget: ${data.budget ? data.budget.replace(/-/g, ' - ') : 'Not specified'}
+
+*Project Details:*
+${data.message}
+
+*Submitted at:* ${new Date().toLocaleString('en-IN', { 
+  timeZone: 'Asia/Kolkata',
+  dateStyle: 'medium',
+  timeStyle: 'short'
+})}`;
+
+    // Encode the message for URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    
+    // Create WhatsApp URL
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -69,12 +104,16 @@ export default function ServiceDetail() {
         budget: formData.budget,
         submitted_at: new Date().toLocaleString(),
       });
+
+      // Send WhatsApp message
+      sendWhatsAppMessage(formData);
     }
 
     setSubmitting(false);
 
     if (!error) {
       setSubmitted(true);
+      const submittedData = { ...formData }; // Store data before clearing
       setFormData({
         name: '',
         email: '',
@@ -196,6 +235,7 @@ export default function ServiceDetail() {
                 >
                   <div className="text-green-600 text-lg font-semibold mb-2">Request Submitted!</div>
                   <p className="text-green-700">We'll get back to you within 24 hours.</p>
+                  <p className="text-green-600 text-sm mt-2">WhatsApp message opened automatically</p>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -278,12 +318,17 @@ export default function ServiceDetail() {
                     {submitting ? 'Submitting...' : 'Submit Request'}
                     <Send size={18} />
                   </motion.button>
+
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    After submission, a WhatsApp message will be automatically opened
+                  </p>
                 </form>
               )}
             </motion.div>
           </div>
         </div>
       </section>
+      <FeaturedBrochureSection />
     </div>
   );
 }
