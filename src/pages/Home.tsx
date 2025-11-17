@@ -108,7 +108,7 @@ export default function Home() {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed text-lg">
                 <p>
-                  Founded in 2010, Ayyappan & Co has grown from a small electrical contracting firm to one of India's leading power infrastructure companies. Our journey has been marked by a relentless pursuit of excellence and a commitment to powering India's growth.
+                  Founded in 2009, Ayyappan & Co has grown from a small electrical contracting firm to one of India's leading power infrastructure companies. Our journey has been marked by a relentless pursuit of excellence and a commitment to powering India's growth.
                 </p>
                 <p>
                   With over 100 successfully completed projects across transmission lines, distribution networks, and substations, we have established ourselves as a trusted partner for utilities, government agencies, and private sector clients.
