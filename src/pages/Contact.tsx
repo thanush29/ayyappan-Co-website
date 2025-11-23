@@ -72,32 +72,22 @@ Sent via Ayyappan & Co Contact Form`;
     }
   };
 
-  const contactInfo = [
+const contactInfo = [
     {
       icon: Building2,
-      title: 'Registered Office',
-      details: [
-        'No:5/255-G, E.B Colony',
-        'A.Salaipudur, Kovilpatti',
-        'Tamilnadu 628502, India',
-        '+91 9442152528'
-      ],
-      color: '#0047FF',
-    },
-    {
-      icon: MapPin,
-      title: 'Office Address',
+      title: 'Head Office',
       details: [
         'No:5/107-D1, Meenakshi Nagar',
         '4th Street, A.Salaipudur',
         'Kovilpatti, Tamilnadu 628502',
         '04632-242528'
       ],
-      color: '#7A00FF',
+      color: '#0047FF',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31511.274362337303!2d77.847878!3d9.162655!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b06b3993a3f6e67%3A0x76c5001d524bff58!2sAyyappan%20%26%20Co!5e0!3m2!1sen!2sin!4v1762699277803!5m2!1sen!2sin'
     },
     {
-      icon: Building2,
-      title: 'Chennai Headquarters',
+      icon: MapPin,
+      title: 'Chennai Branch Office',
       details: [
         'Old No.45, New No. 95',
         'Ground Floor, Poes Main Road',
@@ -105,6 +95,18 @@ Sent via Ayyappan & Co Contact Form`;
         '+91 99620 56262'
       ],
       color: '#00C853',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.1977854545436!2d80.24873631482193!3d13.032810790821596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a526799a5c5c5c5%3A0x5c5c5c5c5c5c5c5c!2sPoes%20Garden%2C%20Chennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin'
+    },
+    {
+      icon: Building2,
+      title: 'Saudi Arabia Office',
+      details: [
+        'Venus Energy',
+        'Noor Plaza, 3rd Floor, 2770',
+        'Custodian of Two Holy Mosques Rd',
+        'Al Khobar – 34448, Saudi Arabia'
+      ],
+      color: '#7A00FF',
     },
     {
       icon: Mail,
@@ -366,25 +368,42 @@ Sent via Ayyappan & Co Contact Form`;
 
             {/* Map Section */}
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-              className="h-full min-h-[600px] lg:sticky lg:top-24"
-            >
-              <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200 bg-gray-100">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31511.274362337303!2d77.847878!3d9.162655!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b06b3993a3f6e67%3A0x76c5001d524bff58!2sAyyappan%20%26%20Co!5e0!3m2!1sen!2sin!4v1762699277803!5m2!1sen!2sin"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Ayyappan & Co Location"
-                />
-              </div>
-            </motion.div>
+  initial={{ opacity: 0, x: 40 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+  className="h-full min-h-[600px] lg:sticky lg:top-24"
+>
+  <div className="w-full h-full flex flex-col gap-4">
+    {/* Main Branch */}
+    <div className="w-full flex-1 min-h-[280px] rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200 bg-gray-100">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31511.274362337303!2d77.847878!3d9.162655!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b06b3993a3f6e67%3A0x76c5001d524bff58!2sAyyappan%20%26%20Co!5e0!3m2!1sen!2sin!4v1762699277803!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        title="Ayyappan & Co - Main Branch"
+      />
+    </div>
+
+    {/* Chennai Branch */}
+    <div className="w-full flex-1 min-h-[280px] rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200 bg-gray-100">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.9183705391206!2d80.24539608651857!3d13.040867754485681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a526700742fb955%3A0xe95d30601d229b5a!2sAyyappan%20%26%20Co%20Chennai%20Headquarters!5e0!3m2!1sen!2sin!4v1763915213721!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        title="Ayyappan & Co - Chennai Headquarters"
+      />
+    </div>
+  </div>
+</motion.div>
           </div>
         </div>
       </section>
