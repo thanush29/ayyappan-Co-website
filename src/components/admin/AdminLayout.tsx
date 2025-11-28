@@ -47,14 +47,20 @@ export function AdminLayout({ children, currentView, onViewChange }: AdminLayout
 
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0047FF] via-[#7A00FF] to-[#00C853] flex items-center justify-center">
-              <Zap className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-lg overflow-hidden">
+                <img
+                  src="/logo1.jpg"
+                  alt="Ayyappan & Co Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
+                <p className="text-xs text-gray-600">Ayyappan & Co</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
-              <p className="text-xs text-gray-600">Ayyappan & Co</p>
-            </div>
-          </div>
+
 
           {/* User info & logout */}
           <div className="flex items-center gap-4">

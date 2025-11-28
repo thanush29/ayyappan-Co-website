@@ -289,10 +289,10 @@ ${data.message}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0047FF] focus:border-transparent outline-none"
                     >
                       <option value="">Select budget range</option>
-                      <option value="under-10L">Under ₹10 Lakhs</option>
-                      <option value="10L-50L">₹10 - 50 Lakhs</option>
-                      <option value="50L-1Cr">₹50 Lakhs - 1 Crore</option>
-                      <option value="above-1Cr">Above ₹1 Crore</option>
+                      <option value="under-50L">Under ₹50 Lakhs</option>
+                      <option value="50L-1cr">₹50 Lakhs - 1 Crore</option>
+                      <option value="1Cr-10Cr">₹1 Crore - 10 Crore</option>
+                      <option value="above-10Cr">Above 10 Crore</option>
                     </select>
                   </div>
 
