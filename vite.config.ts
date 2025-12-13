@@ -1,38 +1,29 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig, PluginOption } from "vite";
 
+import sparkPlugin from "@github/spark/spark-vite-plugin";
+import createIconImportProxy from "@github/spark/vitePhosphorIconProxyPlugin";
+import { resolve } from 'path'
+
+const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
+
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-
-  optimizeDeps: {
-    include: ['pdfjs-dist'],   // 👈 Force Vite to include pdfjs-dist
-    exclude: ['lucide-react'],
+  server: {
+    port: 8000,
   },
+  plugins: [
 
+    react(),
+    tailwindcss(),
+    // DO NOT REMOVE
+    createIconImportProxy() as PluginOption,
+    sparkPlugin() as PluginOption,
+  ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-
-  worker: {
-    format: 'es', // 👈 Required for PDF.js worker
-  },
-
-  appType: 'spa',
-
-  server: {
-    fs: {
-      strict: false,
-    },
-  },
-
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: undefined,
-      },
-    },
+      '@': resolve(projectRoot, 'src')
+    }
   },
 });

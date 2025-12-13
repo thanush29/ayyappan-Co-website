@@ -1,3 +1,127 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  html {
+    background-color: #eee8a9;
+  }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    background-color: #eee8a9 !important;
+    background-image: none;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+}
+
+@layer utilities {
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+:root {
+  /* Palette: #1C6EA4 (primary blue), #39726F (deep teal), #EEE8A9 (soft yellow) */
+  --background: #ffffff;
+  --foreground: #39726f;
+  --card: #ffffff;
+  --card-foreground: #39726f;
+  --popover: #ffffff;
+  --popover-foreground: #39726f;
+  --primary: #1c6ea4;
+  --primary-foreground: #ffffff;
+  --secondary: #39726f;
+  --secondary-foreground: #ffffff;
+  --muted: #eee8a9;
+  --muted-foreground: #39726f;
+  --accent: #eee8a9;
+  --accent-foreground: #39726f;
+  --success: #1c6ea4;
+  --success-foreground: #ffffff;
+  --destructive: #39726f;
+  --destructive-foreground: #ffffff;
+  --border: #39726f;
+  --input: #39726f;
+  --ring: #1c6ea4;
+  --radius: 0.5rem;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+  --radius-2xl: calc(var(--radius) * 3);
+  --radius-full: 9999px;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal overflow on mobile */
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Power Grid Mesh Pattern - Tower overlay on top of everything */
+
+.power-grid-pattern {
+  position: relative;
+}
+
+.power-grid-pattern::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("/unnamed.jpg");
+  background-repeat: repeat;
+  background-position: center center;
+  background-size: 400px auto;
+  opacity: 0.06;
+}

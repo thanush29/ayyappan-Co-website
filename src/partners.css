@@ -1,0 +1,141 @@
+/* Partners Section */
+.partners-section {
+  padding: 4rem 0;
+  background: linear-gradient(to bottom, #ffffff, #f9fafb);
+  overflow: hidden;
+}
+
+.partners-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header Styles */
+.partners-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.partners-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-weight: 600;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.partners-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.title-dark {
+  color: #0a1f44;
+}
+
+.title-red {
+  color: #dc2626;
+}
+
+/* Scrolling Container */
+.partners-scroll-wrapper {
+  position: relative;
+}
+
+/* Gradient Overlays */
+.gradient-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8rem;
+  background: linear-gradient(to right, #ffffff, transparent);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.gradient-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 8rem;
+  background: linear-gradient(to left, #f9fafb, transparent);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Scrolling Track */
+.partners-track {
+  display: flex;
+  animation: scroll 30s linear infinite;
+}
+
+.partners-track:hover {
+  animation-play-state: paused;
+}
+
+/* Partner Card */
+.partner-card {
+  flex-shrink: 0;
+  width: 200px;
+  height: 120px;
+  margin: 0 1.5rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.partner-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Partner Logo */
+.partner-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.partner-card:hover .partner-logo {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+/* Keyframes Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .partners-title {
+    font-size: 1.875rem;
+  }
+
+  .partner-card {
+    width: 160px;
+    height: 100px;
+    margin: 0 1rem;
+  }
+}

@@ -1,89 +1,53 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ChatbotButton from "./components/chatbot/ChatbotButton";
+import { Toaster } from 'sonner'
+import { Header } from '@/components/Header'
+import { Hero } from '@/components/Hero'
+import { About } from '@/components/About'
+import { WhyChooseUs } from '@/components/WhyChooseUs'
+import { Products } from '@/components/Products'
+import { TechnologyShowcase } from '@/components/TechnologyShowcase'
+import { Specifications } from '@/components/Specifications'
+import { Certifications } from '@/components/Certifications'
+import { Gallery } from '@/components/Gallery'
+import { Clients } from '@/components/Clients'
+import { Services } from '@/components/Services'
+import { Team } from '@/components/Team'
+import { FeaturedProject } from '@/components/FeaturedProject'
+import { DetailedServices } from '@/components/DetailedServices'
+import { CompanyValues } from '@/components/CompanyValues'
+import {Swiper} from '@/components/Swiper'
+import { Testimonials } from '@/components/Testimonials'
 
-// Public Pages
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import ServiceDetail from "./pages/ServiceDetail";
-import Projects from "./pages/Projects";
-import ProjectDetail from "./pages/ProjectDetail";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
-
-// Admin Pages
-import AdminLogin from "./pages/admin/Login";
-import { AdminLayout } from "./components/admin/AdminLayout";
-import Dashboard from "./pages/admin/Dashboard";
-import { ServicesManager } from "./pages/admin/ServicesManager";
-import { ProjectsManager } from "./pages/admin/ProjectsManager";
-import { ClientsManager } from "./pages/admin/ClientsManager";
-import { SubmissionsViewer } from "./pages/admin/SubmissionsViewer";
-
-// ScrollToTop Component (added here)
-const ScrollToTop: React.FC = () => {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [pathname]);
-
-  return null;
-};
+import { Contact } from '@/components/Contact'
+import { Footer } from '@/components/Footer'
 
 function App() {
-  const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith("/admin");
-
   return (
-    <>
-      {/* Scroll to top on every route change */}
-      <ScrollToTop />
+    <div className="relative min-h-screen bg-[#90e0ef]/50 smooth-scroll">
+      <Toaster position="top-right" richColors />
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <WhyChooseUs />
+        <Products />
+        <TechnologyShowcase />
+        <Specifications />
+        <Certifications />
+        <Gallery />
+        <CompanyValues />
+        <Clients />
+        <Services />
+        <FeaturedProject />
+        <DetailedServices />
+        <Team />
+        <Swiper />
+        <Testimonials />
 
-      {!isAdminRoute && <Header />}
-
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/services/:id" element={<ServiceDetail />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="/contact" element={<Contact />} />
-
-        {/* Admin Login */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-
-        {/* Admin Protected Routes */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="services" element={<ServicesManager />} />
-          <Route path="projects" element={<ProjectsManager />} />
-          <Route path="clients" element={<ClientsManager />} />
-          <Route path="submissions" element={<SubmissionsViewer />} />
-        </Route>
-
-        {/* 404 Not Found */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <ChatbotButton />
-
-      {!isAdminRoute && <Footer />}
-    </>
-  );
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  )
 }
 
-export default App;
+export default App

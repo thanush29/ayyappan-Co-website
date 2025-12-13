@@ -1,16 +1,15 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import App from "./App";
-import "./index.css";
+import { createRoot } from 'react-dom/client'
+import { ErrorBoundary } from "react-error-boundary";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
-);
+import App from './App.tsx'
+import { ErrorFallback } from './ErrorFallback.tsx'
+
+import "./main.css"
+import "./styles/theme.css"
+import "./index.css"
+
+createRoot(document.getElementById('root')!).render(
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <App />
+   </ErrorBoundary>
+)
